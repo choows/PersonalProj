@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="col-xs-12 container" ng-app="History" ng-controller="HistoryController">
+    <div class="col-12">
+        <button ng-click="Test()" hidden id="TexTBtn"></button>
+        <div class="col-12 col-sm-12 row">
+            <div class="col-6 col-sm-6">
+                <button class="btn-primary btn pull-left" ng-click="GoToPrevious()" ng-show="CurrentPage > 1"><span class="glyphicon glyphicon-arrow-left"></span></button>
+            </div>
+            <div class="col-6 col-sm-6">
+                <button class="btn-primary btn pull-right" ng-click="GoToNext()" ng-show="Result.length >= PerPage"><span class="glyphicon glyphicon-arrow-right"></span></button>
+            </div>
+        </div>
+        <table class="table table-responsive" ng-init="GetInit()">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="h in Result">
+                    <td>{{h.ID}}</td>
+                    <td>{{h.Date}}</td>
+                    <td>{{h.Details}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<script>
+    var app = angular.module("History", []);
+    app.controller('HistoryController', function ($scope) {
+
+        $scope.CurrentPage = 1;
+        $scope.PerPage = 20;
+
+        $scope.GetHistory = function (page, perpage) {
+            var Data = {
+                "Page": page,
+                "PerPage": perpage
+            };
+            $.post('@Url.Action("GetHistory", "History")', Data, function (data, status) {
+                if (status == "success") {
+                    for (var r in data) {
+                        data[r].Date = $scope.ReformatDatetime(data[r].Date);
+                    }
+                    $scope.Result = data;
+                    $scope.CurrentPage = page;
+                }
+                $("#TexTBtn").click();
+            });
+        }
+        $scope.Test = function () {}
+        $scope.GetInit = function () {
+            $scope.GetHistory(1, $scope.PerPage);
+        }
+        $scope.ReformatDatetime = function (date) {
+            var millisec = date.substring(6, 19);
+            var d = new Date(parseInt(millisec));
+            return d.toString();
+        }
+        $scope.GoToPrevious = function () {
+            $scope.GetHistory($scope.CurrentPage -1 , $scope.PerPage);
+        }
+        $scope.GoToNext = function () {
+            $scope.GetHistory($scope.CurrentPage + 1, $scope.PerPage);
+        }
+    });
+</script>

@@ -1,0 +1,94 @@
+﻿
+@{
+    ViewBag.Title = (string)ViewBag.MediaType;
+    string MediaType = (string)ViewBag.MediaType;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="col-xs-12" ng-app="Media" ng-controller="MediaController">
+    <div class="col-12" ng-init="GetMedia('@MediaType' , '1')">
+        <button id="testbtn" hidden ng-click="TestClick()"></button>
+        <div class="well well-lg col-xl-1 col-sm-4" ng-repeat="med in Result">
+            <div class="col-12 text-center img-hoverable" ng-show="MediaType == 'image'" ng-click="med.ShowDownload = !med.ShowDownload">
+                <img ng-src="{{med.LocalPath}}" height="200" width="200"/>
+                <div class="text-left">
+                    <label>{{med.UploadFileName}}</label>
+                    <label>{{med.UploadDate}}</label>
+                </div>
+                <a href="{{SelectedImageSource}}" class="btn btn-primary" style="width:100%" download ng-show="med.ShowDownload == true">
+                    Download &nbsp;<i class="fa fa-download"></i>
+                </a>
+            </div>
+            <div class="col-12 text-center img-hoverable" ng-show="MediaType == 'video'" ng-click="med.ShowDownload = !med.ShowDownload">
+                <video controls width="200" height="200">
+                    <source type="video/mp4" ng-src="{{med.LocalPath}}" />
+                    Browser does not support video.
+                </video>
+                <div class="text-left">
+                    <label>{{med.UploadFileName}}</label>
+                    <label>{{med.UploadDate}}</label>
+                </div>
+                <a href="{{SelectedImageSource}}" class="btn btn-primary" style="width:100%" download ng-show="med.ShowDownload == true">
+                    Download &nbsp;<i class="fa fa-download"></i>
+                </a>
+            </div>
+            <div class="col-12 text-center img-hoverable" ng-show="MediaType == 'application'" ng-click="med.ShowDownload = !med.ShowDownload">
+                <img src="~/image/document_img.png" height="150" width="150" />
+                <div class="text-left">
+                    <label>{{med.UploadFileName}}</label>
+                    <label>{{med.UploadDate}}</label>
+                </div>
+                <a href="{{SelectedImageSource}}" class="btn btn-primary" style="width:100%" download ng-show="med.ShowDownload == true">
+                    Download &nbsp;<i class="fa fa-download"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="row col-lg-12 col-sm-12">
+        <div class="col-4">
+            <button ng-show="CurrentPage > 1" class="btn btn-primary"><i class="fa fa-chevron-left"></i> &nbsp; Previous</button>
+        </div>
+        <div class="col-4 text-center"><strong>{{CurrentPage}}</strong></div>
+        <div class="col-4">
+            <button ng-show="Result.length >= PerPage" class="btn btn-primary">
+                Next &nbsp;<i class="fa fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<script>
+    var app = angular.module("Media", []);
+    app.controller('MediaController', function ($scope) {
+        $scope.MediaType = '@MediaType';
+        $scope.TestClick = function () {
+        }
+        $scope.PerPage = 80;
+        $scope.CurrentPage = 1;
+        $scope.GetMedia = function (MediaType , Page) {
+
+                var Data = {
+                    "MediaType": MediaType,
+                    "Page": Page,
+                    "PerPage": $scope.PerPage
+                };
+                $.post('@Url.Action("GetMedias", "Upload")', Data, function (data, status) {
+                    if (status == "success") {
+                        for (var m in data) {
+                            data[m].LocalPath = window.location.origin + data[m].LocalPath + "/" + data[m].FileName;
+                            data[m].UploadDate = $scope.ReformatDatetime(data[m].UploadDate);
+                            data[m].ShowDownload = false;
+                        }
+                        $scope.Result = data;
+                        $scope.CurrentPage++;
+                        $("#testbtn").click();
+                    }
+                });
+        }
+        $scope.ReformatDatetime = function (date) {
+            var millisec = date.substring(6, 19);
+            var d = new Date(parseInt(millisec));
+            return d.toString();
+        }
+    });
+</script>

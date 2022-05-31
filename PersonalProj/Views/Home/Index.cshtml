@@ -1,0 +1,255 @@
+﻿@using PersonalProj.Models
+@{
+    CustomDbContext customDbContext = new CustomDbContext();
+    ViewBag.Title = "Home";
+    List<Expenses> expenses = (from e in customDbContext.Expenses
+                               select e).ToList();
+    List<Place> places = customDbContext.places.ToList();
+    if (places == null)
+    {
+        places = new List<Place>();
+    }
+}
+
+<div class="container text_chg" ng-app="Main" ng-controller="MainController">
+    <div class="col-12">
+        <div>
+            <button class="btn btn-primary pull-right" onclick="DisplayExpenses()"><i class="fa fa-plus"></i></button>
+        </div>
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th>No. </th>
+                    <th>DateTime</th>
+                    <th>Place/Description</th>
+                    <th>Total</th>
+                    <th>Leow</th>
+                    <th>Choo</th>
+                    <th>Leow Paid</th>
+                    <th>Choo Paid</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (expenses != null)
+                    {
+                        foreach (Expenses ex in expenses)
+                        {
+                            <tr>
+                                <td>@ex.ID</td>
+                                <td>@ex.ExpensesDateTime</td>
+                                <td>@ex.Place.Name</td>
+                                <td>@ex.Sum</td>
+                                <td>@ex.Leow</td>
+                                <td>@ex.Choo</td>
+                                <td>@ex.LeowPaid</td>
+                                <td>@ex.ChooPaid</td>
+                            </tr>
+                        }
+                    }
+
+                }
+
+            </tbody>
+        </table>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="NewExpensesModal" tabindex="-1" role="dialog" aria-labelledby="New Folder Name" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <label class="modal-title" id="exampleModalLabel">New Expenses</label>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="CloserModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group-lg">
+                        <div class="form-group row">
+                            @*<label for="staticEmail" class="col-sm-2 control-label">Date</label>*@
+                            <label class="control-label col-sm-2" style="line-height:50px;">Date</label>
+                            <div class="col-sm-10">
+                                <input type="date" class="form-control" id="datetime" ng-model="datetime" style="width:100%">
+                            </div>
+                        </div>
+                        @*<datalist id="browsers">
+                            <option value="Edge">
+                            <option value="Firefox">
+                            <option value="Chrome">
+                            <option value="Opera">
+                            <option value="Safari">
+                        </datalist>*@
+                    <div class="form-group row">
+                        @*<label for="staticEmail" class="col-sm-2 control-label">Place</label>*@
+                        <label class="control-label col-sm-2" style="line-height:50px;">Place</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" ng-model="place" list="p">
+                            <datalist id="p">
+                                @{
+                                    foreach (Place p in places)
+                                    {
+                                        <option value="@p.Name"></option>
+                                    }
+                                }
+                            </datalist>
+                            @*<select class="form-control" id="place" ng-model="place" ng-show="!isNewPlace">
+                @{
+                    foreach (Place p in places)
+                    {
+                        <option value="@p.Name">@p.Name</option>
+                    }
+                }
+            </select>*@
+                            <input type="text" class="form-control" ng-model="new_place" ng-show="isNewPlace" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        @*<label for="staticEmail" class="col-sm-2 control-label">Details</label>*@
+                        <label class="control-label col-sm-2" style="line-height:50px;">Details</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" id="detail_head" ng-model="head_detail">
+                                <option value="" selected>Select One</option>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                                <option value="Supper">Supper</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <input class="form-control" style="width:100%" ng-model="tail_detail" />
+                        </div>
+                    </div>
+                        <div class="form-group row">
+                            <div class="col-sm-12">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th style="text-align:center">Choo WS</th>
+                                            <th style="text-align:center">Leow YL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><label class="control-label" style="height:100%;width:100%; vertical-align:central;text-align:center;line-height:50px;">Spent</label></td>
+                                            <td>
+                                                <input type="number" class="form-control" id="choo" value="0.00" ng-model="choo" style="text-align:right" ng-change="OntextChange()">
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control" id="leow" value="0.00" ng-model="leow" style="text-align:right" ng-change="OntextChange()">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label class="control-label" style="height:100%;width:100%; vertical-align:central;text-align:center;line-height:50px;">Paid</label></td>
+                                            <td>
+                                                <input type="number" class="form-control" id="choo_paid" value="0.00" ng-model="choo_paid" style="text-align:right" ng-change="OntextChange()">
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control" id="leow_paid" value="0.00" ng-model="leow_paid" style="text-align:right" ng-change="OntextChange()">
+                                            </td>
+                                        </tr>
+                                        <tr ng-show="Error_display" ng-init="$scope.Error_display = False">
+                                            <td colspan="3" class="text-danger">Spend and Paid are not matching</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        @*<div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 control-label">Leow</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" id="leow" value="0.00" ng-model="leow">
+                <input type="number" class="form-control" id="leow_paid" value="0.00" ng-model="leow_paid">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 control-label">Choo</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" id="choo" value="0.00" ng-model="choo">
+                <input type="number" class="form-control" id="choo_paid" value="0.00" ng-model="choo_paid">
+            </div>
+        </div>*@
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" ng-click="AddExp()" ng-disabled="DisableConfirmBtn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function DisplayExpenses() {
+        $("#NewExpensesModal").modal('show');
+    }
+    
+</script>
+<script>
+    var app = angular.module("Main", []);
+    app.controller('MainController', function ($scope) {
+        $scope.Uploads = function () {
+            while (totalfiles >= 0) {
+                if (allowUpload) {
+                    allowUpload = false;
+                    $scope.FileUpload.push({
+                        name: document.getElementById('FileID').files[totalfiles].name,
+                        Status: "Uploading"
+                    });
+                    $scope.SingleUpload(document.getElementById('FileID').files[totalfiles]);
+                    totalfiles = totalfiles - 1;
+                }
+            }
+        }
+        $scope.OntextChange = function () {
+            if ($scope.leow == 0 && $scope.choo == 0 && $scope.leow_paid == 0 && $scope.choo_paid == 0) {
+                $scope.DisableConfirmBtn = true;
+            } else {
+                $scope.DisableConfirmBtn = false;
+            }
+            if (($scope.leow_paid + $scope.choo_paid) != ($scope.leow + $scope.choo)) {
+                $scope.Error_display = true;
+                $scope.DisableConfirmBtn = true;
+            } else {
+                $scope.Error_display = false;
+                $scope.DisableConfirmBtn = false;
+            }
+            
+        }
+        $scope.isNewPlace = false;
+        $scope.NewPlace = function () {
+            $scope.isNewPlace = !$scope.isNewPlace;
+        }
+        $scope.DisableConfirmBtn = true;
+        $scope.leow = 0.00;
+        $scope.choo = 0.00;
+        $scope.leow_paid = 0.00;
+        $scope.choo_paid = 0.00;
+        $scope.head_detail = "";
+        $scope.AddExp = function () {
+
+            
+            var Data = {
+                "Datetime": $('#datetime').val(),
+                "L": $scope.leow,
+                "C": $scope.choo,
+                "L_Paid": $scope.leow_paid,
+                "C_Paid": $scope.choo_paid,
+                "place": $scope.place,
+                "head_detail": $scope.head_detail,
+                "tail_detail" : $scope.tail_detail
+                };
+                $.post('@Url.Action("AddNewExpenses", "Upload")', Data, function (data, status) {
+                    if (data.status == 200) {
+                        location.reload();
+                    } else {
+                        window.alert("Failed");
+                    }
+                });
+        }
+
+    });
+
+</script>

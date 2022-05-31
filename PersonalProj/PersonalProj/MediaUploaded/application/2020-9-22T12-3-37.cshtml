@@ -1,0 +1,269 @@
+﻿@{
+    Layout = "~/Shared/_SiteLayout.cshtml";
+    Function _function = new Function();
+    //_function.ChangeLanguage("");
+    Page.Title = Resources.Languages.Title;
+    ApplicationSessions applicationSession = new ApplicationSessions();
+    string news = _function.GetScroolingNews(Request.Url.Host.ToLower());
+    DepMerchant dep = new DepMerchant();
+    //dep.GetAliPayMerchantData(out sign);
+    bool bonus_1_exist = (File.Exists(Server.MapPath("~/promotion/promotions/deposit_bonus1.html")));
+    bool bonus_2_exist = (File.Exists(Server.MapPath("~/promotion/promotions/deposit_bonus2.html")));
+    bool bonus_3_exist = (File.Exists(Server.MapPath("~/promotion/promotions/deposit_bonus3.html")));
+    bool bonus_4_exist = (File.Exists(Server.MapPath("~/promotion/promotions/deposit_bonus4.html")));
+    bool bonus_5_exist = (File.Exists(Server.MapPath("~/promotion/promotions/deposit_bonus5.html")));
+    bool vip_exist = (File.Exists(Server.MapPath("~/promotion/promotions/pi88_vip.html")));
+    bool[] exist_arr = {bonus_1_exist, bonus_2_exist, bonus_3_exist, bonus_4_exist, bonus_5_exist, vip_exist };
+    List<bool> exist_list = new List<bool>(exist_arr);
+    bool actived = true;
+    }
+
+        <div id="container">
+            @RenderPage("~/Shared/_SiteHeader.cshtml")
+            <div id="page-wrap">
+                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        @{
+                                        
+                                        for (int i = 0; i < exist_arr.Length; i++)
+                                        {
+                                            if (exist_arr[i] == true)
+                                            {
+                                                if (actived)
+                                                {
+                                        <li data-target="#carouselExampleIndicators" data-slide-to="@i" class="active"></li>
+                                        actived = false;
+                                    }
+                                    else
+                                    {
+                                        <li data-target="#carouselExampleIndicators" data-slide-to="@i"></li>
+                                    }
+                                }
+                            }
+                            actived = true;
+                        }
+                        
+                    </ol>
+                    
+                    <div class="carousel-inner">
+                       
+                        @{
+                            if (bonus_1_exist)
+                            {
+                                if (actived)
+                                {
+                                    <div class="carousel-item active">
+                                        <a href="~/deposit_bonus1.cshtml">
+                                            <img class='d-block w-100' src="~/promotion/images/mainbanner/banner_01.jpg" alt='First slide'>
+                                        </a>
+                                    </div>
+                                    actived = false;
+                                }
+                                else
+                                {
+                                    <div class="carousel-item" >
+                                        <a href="~/deposit_bonus1.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_01.jpg" alt="First slide">
+                                        </a>
+                                    </div>
+                                                    }
+                                                }
+                        }
+                        @{
+                            if (bonus_2_exist)
+                            {
+                                if (actived)
+                                {
+                                    <div class="carousel-item active">
+                                        <a href="~/deposit_bonus2.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_02.jpg" alt="Second slide">
+                                        </a>
+                                    </div>
+                                    actived = false;
+                                                }
+                                                else
+                                                {
+                                    <div class="carousel-item">
+                                        <a href="~/deposit_bonus2.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_02.jpg" alt="Second slide">
+
+                                        </a>
+                                    </div>
+                                                    }
+
+                                                }
+                        }
+                        @{
+                            if (bonus_3_exist)
+                            {
+                                if (actived)
+                                {
+                                    <div class="carousel-item active">
+                                        <a href="~/deposit_bonus3.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_03.jpg" alt="Second slide">
+                                        </a>
+                                    </div>
+                                    actived = false;
+                                }
+                                else
+                                {
+                                    <div class="carousel-item">
+                                        <a href="~/deposit_bonus3.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_03.jpg" alt="Second slide">
+                                        </a>
+                                    </div>
+                                    }
+                                }
+                            }
+                        @{
+                            if (bonus_4_exist)
+                            {
+                                if (actived)
+                                {
+                                    <div class="carousel-item active">
+                                        <a href="~/deposit_bonus4.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_04.jpg" alt="Forth slide">
+                                        </a>
+                                    </div>
+                                                        actived = false;
+                                                }
+                                                else
+                                                {
+                                    <div class="carousel-item">
+                                        <a href="~/deposit_bonus4.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_04.jpg" alt="Forth slide">
+                                        </a>
+                                    </div>
+                                                    }
+                                                }
+                        }
+                        @{
+                            if (bonus_5_exist)
+                            {
+                                if (actived)
+                                {
+                                    <div class="carousel-item active">
+                                        <a href="~/deposit_bonus5.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_05.jpg" alt="Forth slide">
+                                        </a>
+                                    </div>
+                                    actived = false;
+                                }
+                                else
+                                {
+                                    <div class="carousel-item">
+                                        <a href="~/deposit_bonus5.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_05.jpg" alt="Forth slide">
+
+                                        </a>
+                                    </div>
+                                    }
+
+                                }
+                            }
+                        @{
+                            if (vip_exist)
+                            {
+                                if (actived)
+                                {
+                                    <div class="carousel-item active">
+                                        <a href="~/pi88_vip.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_06.jpg" alt="Sixth slide">
+                                        </a>
+                                    </div>
+                                    actived = false;
+                                }
+                                else
+                                {
+                                    <div class="carousel-item">
+                                        <a href="~/pi88_vip.cshtml">
+                                            <img class="d-block w-100" src="~/promotion/images/mainbanner/banner_06.jpg" alt="Sixth slide">
+                                        </a>
+                                    </div>
+                                    }
+                                }
+                            }
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" style="z-index:10;">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next" style="z-index:10;">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                <!----- news ---->
+                <div class="ct-newsr bg-lblue txt-lblue py-1 padding-left10 padding-right10 font09 text-white"><marquee scrollamount="3"><span>@Html.Raw(news.Replace("<![CDATA[<P>", "").Replace("</P>]]>", "\t\t\t\t\t"))</span></marquee></div>
+                <!----- register button ---->
+                <div class="ct-reg row no-gutters">
+                    <div class="col-6 bg-green card py-2 border0 border-radius0">
+                        <div class="col-register">
+                            <a href="~/CreateRealAccount.cshtml">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col-4 col-sm-4">
+                                        <img class="img-center" src="images/icon-realacc.png" alt="real-account">
+                                    </div>
+                                    <div class="col mr-2">
+                                        <div class="text-xs text-uppercase txt-white">@Resources.Languages.Register</div>
+                                        <div class="mb-0 hbold txt-white col-text">@Resources.Languages.RealAccount</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-6 bg-purple card py-2 border0 border-radius0">
+                        <div class="col-register">
+                            <a href="~/CreateDemoAccount.cshtml">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col-4 col-sm-4">
+                                        <img class="img-center" src="images/icon-demoacc.png" alt="demo-account">
+                                    </div>
+                                    <div class="col mr-2">
+                                        <div class="text-xs text-uppercase txt-white">@Resources.Languages.Register</div>
+                                        <div class="mb-0 hbold txt-white col-text">@Resources.Languages.DemoAccount</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-nowrap justify-content-between align-items-center">
+                    <div class="row no-gutters py-3 padding-left10 padding-right10">
+                        <div class="col-3 col-sm-3 py-3">
+                            <a class="" href="~/Display_Menu.cshtml?Type=GunYuWoMen&ID=10"><img class="img-center" src="images/nav-aboutus.png" alt="menu"><div class="text-center txt-dgrey id-content-txt">@Resources.Languages.AboutUs</div></a>
+                        </div>
+                        <div class="col-3 col-sm-3 py-3">
+                            <a class="" href="~/OurBenefit.cshtml"><img class="img-center" src="images/nav-benefit.png" alt="menu"><div class="text-center txt-dgrey id-content-txt">@Resources.Languages.OurBenefit</div></a>
+                        </div>
+                        <div class="col-3 col-sm-3 py-3">
+                            <a class="" href="~/ChanPinXinXi.cshtml"><img class="img-center" src="images/nav-product.png" alt="menu"><div class="text-center txt-dgrey id-content-txt">@Resources.Languages.ProductInfomation</div></a>
+                        </div>
+                        <div class="col-3 col-sm-3 py-3">
+                            <a class="" href="~/Display_Menu.cshtml?Type=JiaoYiJiQiao&ID=104"><img class="img-center" src="images/nav-promo.png" alt="menu"><div class="text-center txt-dgrey id-content-txt">@Resources.Languages.Promotion</div></a>
+                        </div>
+                        <div class="col-3 col-sm-3 py-3">
+                            <a class="" href="~/CompanyInfoMT4Download.cshtml"><img class="img-center" src="images/nav-mt4.png" alt="menu"><div class="text-center txt-dgrey id-content-txt">@Resources.Languages.MT4Download</div></a>
+                        </div>
+                        <div class="col-3 col-sm-3 py-3">
+                            <a class="" href="~/ExpertConsultant.cshtml"><img class="img-center" src="images/nav-group.png" alt="menu"><div class="text-center txt-dgrey id-content-txt">@Resources.Languages.AnalysisTeam</div></a>
+                        </div>
+                        <div class="col-3 col-sm-3 py-3">
+                            <a class="" href="~/NewsType.cshtml"><img class="img-center" src="images/nav-trading.png" alt="menu"><div class="text-center txt-dgrey id-content-txt">@Resources.Languages.MarketAnalysis</div></a>
+                        </div>
+                        <div class="col-3 col-sm-3 py-3">
+                            <a class="" href="~/Display_Menu.cshtml?Type=KeHuFuWu"><img class="img-center" src="images/nav-faq.png" alt="menu"><div class="text-center txt-dgrey id-content-txt">@Resources.Languages.FAQ</div></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @RenderPage("~/Shared/_SiteFooter.cshtml")
+        </div>
+        @RenderPage("~/Shared/_SiteScripts.cshtml")
+        <script>
+            function openMT4DownloadPage() {
+
+                window.open("CompanyInfoMT4Download");
+
+            }
+        </script>

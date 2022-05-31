@@ -1,0 +1,109 @@
+﻿
+@{
+    ViewBag.Title = "UploadNewMedia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="col-xs-12 text-center container-fluid" ng-app="Uploading" ng-controller="UploadController">
+    <div class="col-xs-8 text-center">
+        <div class="form-group">
+            <input type="file" multiple="multiple" name="files" id="FileID" />
+            <div>
+                <input type="button" value="Upload" ng-click="Uploads()" class="btn btn-primary" />
+            </div>
+        </div>
+        <table class="table table-responsive col-xs-12 text-left" ng-show="FileUpload.length > 0">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>File Name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="fil in FileUpload">
+                    <td>
+                        {{$index + 1}}
+                    </td>
+                    <td>
+                        {{fil.name}}
+                    </td>
+                    <td ng-show="fil.Status == 'Success'">
+                        <i class="fa fa-check"></i>
+                    </td>
+                    <td ng-show="fil.Status == 'Fail'">
+                        <i class="fa fa-times"></i>
+                    </td>
+                    <td ng-show="fil.Status == 'Uploading'">
+                        <div class="loader"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="col-xs-12">
+                            <label>Total Upload : {{TotalUpload}}</label>
+                        </div>
+                        <div class="col-xs-12">
+                            <label>Success : {{TotalSuccess}}</label>
+                        </div>
+                        <div class="col-xs-12">
+                            <label>Failed : {{TotalFailed}}</label>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</section>
+<script>
+    var app = angular.module("Uploading", []);
+    app.controller('UploadController', function ($scope) {
+        $scope.FileUpload = [];
+        $scope.TotalUpload = 0;
+        $scope.TotalSuccess = 0;
+        $scope.TotalFailed = 0;;
+
+        $scope.Uploads = function () {
+            var totalfiles = document.getElementById('FileID').files.length;
+            $scope.TotalUpload += totalfiles;
+            for (var index = 0; index < totalfiles; index++) {
+                $scope.SingleUpload(document.getElementById('FileID').files[index]);
+            }
+        }
+
+        $scope.SingleUpload = function (file) {
+            $scope.FileUpload.push({
+                name: file.name,
+                Status : "Uploading"
+            });
+            var form_data = new FormData();
+            form_data.append("file", file);
+            $.ajax({
+                url: '@Url.Action("SingleUpload", "Upload")',
+                type: 'post',
+                async : false,
+                data: form_data,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    var idx = $scope.FileUpload.findIndex(x => x.name == file.name);
+                    if (response.success) {
+                        if (idx != -1) {
+                            $scope.FileUpload[idx].Status = "Success";
+                        }
+                        $scope.TotalSuccess += 1;
+                    } else {
+                        if (idx != -1) {
+                            $scope.FileUpload[idx].Status = "Fail";
+                        }
+                        $scope.TotalFailed += 1;
+                    }
+
+                },
+            });
+        }
+    });
+
+</script>

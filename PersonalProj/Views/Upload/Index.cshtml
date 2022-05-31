@@ -1,0 +1,177 @@
+﻿@using PersonalProj.App_Code
+@using PersonalProj.Models
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Current_Path = String.IsNullOrEmpty(Request.Form["Folder_Path"]) ?  "Main" : Request.Form["Folder_Path"];
+    Functions a = new Functions();
+    List<Media> medias = a.GetMedias(Current_Path);
+    string Main_Path = "../MediaUploaded/";
+}
+<section class="col-xs-12">
+    <br />
+    @Current_Path
+<div class="pull-right col-4">
+    <button class="btn col-6 btn-primary" data-toggle="modal" data-target="#NewFolderModal">
+        New Folder &nbsp;<i class="fa fa-plus"></i>
+    </button>
+    &nbsp;
+    <button class="btn col-6 btn-primary" onclick="GotoUpload()">
+        Upload &nbsp; <i class="fa fa-upload"></i>
+    </button>
+</div>
+    
+    <br />
+    <br />
+    <div class="container-fluid">
+        @*<div class="col-lg-2 col-xs-6 col-md-4" c>
+            <img src="~/image/folder.png" style="height:100px;width:100px;" />
+        </div>*@
+        @{
+            foreach (Media m in medias)
+            {
+                switch (m.Type.ToLower())
+                {
+                    case "folder":
+                        <div class="col-lg-2 col-xs-6 col-md-4" ondblclick="NavigateToFolder('@m.FileName')">
+                            <img src="~/image/folder_empty.png" style="height:100px;width:100px;" />
+                            <br />
+                            <label style="height:100px; width:100px; text-align:center;">@m.FileName</label>
+                        </div>
+                        break;
+                    case "image":
+                        <div class="col-lg-2 col-xs-6 col-md-4" onclick="ShowDetail('image', '@m.FileName', '@m.LocalPath', '@m.UploadDate' , '')">
+                            <img src="@(Main_Path +m.LocalPath + "/" + m.FileName)" style="height:100px;width:100px;" />
+                            <br />
+                            <label style="height:100px; width:100px; text-align:center;">@m.FileName</label>
+                        </div>
+                        break;
+                    case "video":
+                        <div class="col-lg-2 col-xs-6 col-md-4" onclick="ShowDetail('video', '@m.FileName', '@m.LocalPath', '@m.UploadDate' , '/image/video_img.png')">
+                            <img src="~/image/video_img.png" style="height:100px;width:100px;" />
+                            <br />
+                            <label style="height:100px; width:100px; text-align:center;">@m.FileName</label>
+                        </div>
+                        break;
+                    default:
+                        <div class="col-lg-2 col-xs-6 col-md-4" onclick="ShowDetail('others', '@m.FileName', '@m.LocalPath', '@m.UploadDate' , '/image/document_img.png')">
+                            <img src="~/image/document_img.png" style="height:100px;width:100px;" />
+                            <br />
+                            <label style="height:100px; width:100px; text-align:center;">@m.FileName</label>
+                        </div>
+                        break;
+                }
+            }
+        }
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="NewFolderModal" tabindex="-1" role="dialog" aria-labelledby="New Folder Name" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <label class="modal-title" id="exampleModalLabel">New Folder Name</label>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="CloseNewFolderModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group-lg">
+                        <input class="form-control" type="text" id="New_Folder_Name" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="CreateNewFolder()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="ImgDetail" role="dialog" aria-labelledby="Image Detail" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <label class="modal-title" id="imageTitle"></label>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6" style="align-content:center; align-items:center;" id="ImageModalDetail"></div>
+                        <div class="col-md-6 col-sm-6 col-xs-6" style="align-content:center; align-items:center;">
+                            <label id="File_Name"></label>
+                            <label id="Upload_Date"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="ButtonList"></div>
+            </div>
+        </div>
+    </div>
+    <form id="TheForm" method="post" action="@Url.Action("UploadNewMedia", "Upload")" target="UploadWindow" hidden>
+        <input type="hidden" name="Path" value="@Current_Path" />
+    </form>
+    <form id="FolderForm" method="post" hidden>
+        <input type="hidden" name="Folder_Path" value="" id="Folder_Path" />
+    </form>
+</section>
+<script>
+    function ShowDetail(img, filename, path, upload_date, other_path) {
+
+        $("#ImageModalDetail").empty();
+        var truepath = "@Main_Path" + path + "/" + filename;
+        if (img == "image") {
+            $("#ImageModalDetail").append("<img src = \"" + truepath + "\" style=\"height:200px;width:200px;\" />");
+        } else if (img == "video") {
+            $("#ImageModalDetail").append("<video width=\"200\" height=\"200\" controls><source src=\""+truepath+"\"></video>");
+        } else {
+            $("#ImageModalDetail").append("<img src = \"" + other_path + "\" style=\"height:200px;width:200px;\" />");
+        }
+        $("#ButtonList").empty()
+            .append("<a class=\"btn btn-primary\" href=\"" + truepath + "\" download>Download <i class=\"fa fa-download\"></i></a>")
+            .append("<button type=\"button\" class=\"btn btn-danger pull-left\" onclick=\"Remove('" + path+ "' , '" + filename + "')\">Delete <i class=\"fa fa-trash\"></i></button>");
+        $("#imageTitle").text(filename);
+        $("#Upload_Date").text("Upload Date : " + upload_date);
+        $("#File_Name").text("File Name : " + filename);
+        $("#ImgDetail").modal('show');
+    }
+    function Remove(path, filename) {
+        var truepath = "@Main_Path" + path + "/" + filename;
+        if (window.confirm("Confirm to remove " + filename + " ?").valueOf()) {
+            $("#ImgDetail").modal('hide');
+            $.post('@Url.Action("RemoveFile", "Upload")', { filepath: truepath , FileName :filename }, function (result) {
+                console.log(result);
+                if (result.success) {
+                    location.reload();
+                }
+            });
+        }
+    }
+    function NavigateToFolder(fileName) {
+        var folder_path = ("@Current_Path" + "/" + fileName);
+        $("#Folder_Path").val(folder_path);
+        $("#FolderForm").submit();
+    }
+    function GotoUpload() {
+        $("#TheForm").submit();
+            }
+            function CreateNewFolder() {
+        $("#CloseNewFolderModal").click();
+                var url = '@Url.Action("CreateNewFolder", "Upload")';
+                var NewFolderName = $("#New_Folder_Name").val();
+                if (NewFolderName != "") {
+            $.post(url, { FolderName: NewFolderName, ParentPath: "@Current_Path"}, function (result) {
+                        if (result.success) {
+                            location.reload();
+                        } else {
+                            window.alert(result.responseText);
+                        }
+                    });
+                } else {
+                    window.alert("Please Enter Valid Folder Name.");
+                }
+
+    }
+</script>

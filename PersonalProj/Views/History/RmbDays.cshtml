@@ -1,0 +1,51 @@
+﻿
+@{
+    ViewBag.Title = "Anniversary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container DaysBackground col-12">
+    <div class="text-center col-12" style="min-height:800px;">
+        <div class="col-12" style="height:250px">
+        </div>
+        <div class="DaysCenter" onclick="ShowsModal()">
+            <h5 class="SubDays">Together for</h5>
+            <h1 class="Days">@ViewBag.TotalDays</h1>
+            <h5 class="SubDays">Days</h5>
+            <h5 class="SubDays">May 13, 2019</h5>
+        </div>
+    </div>
+</div>
+<div class="modal fade" role="img" id="modal-anni-viewer">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">UpComing Anniversary</h4>
+            </div>
+            <div class="modal-body col-12">
+                <ul class="list-group">
+                    <li class="list-group-item">@ViewBag.NextHundDay Days Anniversary <span class="badge">@ViewBag.NextHundDayDiff Days</span></li>
+                    <li class="list-group-item">@ViewBag.NextAnnualDay Anniversary <span class="badge">@ViewBag.NextAnnualDiff Days</span></li>
+                </ul>
+                @*@{ 
+                    if(ViewBag.NextHundDayDiff < ViewBag.NextAnnualDiff)
+                    {
+                        <label>@ViewBag.NextHundDay Days Anniversary</label>
+                    }
+                    else
+                    {
+                        <label>@ViewBag.NextAnnualDay Anniversary</label>
+                    }
+                }*@
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function ShowsModal() {
+        $("#modal-anni-viewer").modal('show');
+    }
+</script>

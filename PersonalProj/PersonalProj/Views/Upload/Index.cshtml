@@ -1,0 +1,19 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="col-xs-12" ng-app="Media" ng-controller="MediaController">
+    <button class="btn col-xs-12" ng-click="GoToNewUpload()">
+        <i class="fa fa-plus" style="font-size:30px;"></i>
+    </button>
+</section>
+<script>
+    var app = angular.module("Media", []);
+    app.controller('MediaController', function ($scope) {
+        $scope.GoToNewUpload = function () {
+            window.open('@Url.Action("UploadNewMedia" , "Upload")');
+        }
+
+    });
+</script>
