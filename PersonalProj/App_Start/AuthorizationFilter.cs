@@ -23,7 +23,6 @@ namespace PersonalProj
                 if (HttpContext.Current.Session["UserID"] == null || HttpContext.Current.Session["U"] == null)
                 {
                     throw new Exception();
-                    
                 }
                 CustomDbContext customDbContext = new CustomDbContext();
                 string UserId = HttpContext.Current.Session["U"].ToString();

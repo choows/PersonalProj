@@ -11,6 +11,7 @@ using PersonalProj.Functions;
 
 namespace PersonalProj.Controllers
 {
+    //https://localhost:
     [AuthorizationFilter]
     public class HomeController : Controller
     {
@@ -18,7 +19,6 @@ namespace PersonalProj.Controllers
         [AuthorizationFilter]
         public ActionResult Index()
         {
-
             List<Expenses> expenses = customDbContext.Expenses.Take(30).ToList();
             ViewBag.Expenses = expenses;
             ViewBag.Places = customDbContext.places.ToList();

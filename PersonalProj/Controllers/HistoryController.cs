@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace PersonalProj.Controllers
 {
+    //https://localhost:52208/History/I
     public class HistoryController : Controller
     {
         CheckAuthentication checkAuthentication = new CheckAuthentication();
