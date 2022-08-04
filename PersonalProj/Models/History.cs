@@ -12,3 +12,4 @@ namespace PersonalProj.Models
         public string Details { get; set; }
     }
 }
+
